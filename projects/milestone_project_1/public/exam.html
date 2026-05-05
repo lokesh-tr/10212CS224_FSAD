@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Exam - ExamPro</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .question-card {
+            margin-bottom: 2rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .option-label input {
+            margin-right: 1rem;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">ExamPro <span>| Exam Mode</span></a>
+        <div class="nav-links">
+            <span id="timerDisplay" style="font-weight: bold; color: var(--secondary); font-size: 1.25rem;"></span>
+            <button class="btn btn-outline btn-sm"
+                onclick="if(confirm('Are you sure you want to exit? Your progress will be lost.')) window.location.href='student.html'">Exit</button>
+        </div>
+    </nav>
+
+    <div class="container fade-in" style="max-width: 800px;">
+        <div class="glass-panel text-center mb-4" id="examHeader">
+            <h1 id="examTitle">Loading...</h1>
+            <p id="examDesc"></p>
+        </div>
+
+        <form id="examForm" class="d-none">
+            <div id="questionsContainer"></div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.25rem; padding: 1rem;">Submit
+                Exam</button>
+        </form>
+
+        <div id="resultCard" class="glass-panel text-center d-none" style="margin-top: 2rem;">
+            <h2>Exam Completed!</h2>
+            <h1 style="font-size: 4rem; color: var(--success);" id="scoreDisplay"></h1>
+            <p>Your results have been saved.</p>
+            <a href="student.html" class="btn btn-outline mt-4">Return to Dashboard</a>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        api.checkAuth('student');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const examId = urlParams.get('id');
+        let timeLeft = 60 * 30; // 30 minutes default
+        let timerInterval;
+
+        function startTimer() {
+            const display = document.getElementById('timerDisplay');
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up!");
+                    document.getElementById('examForm').dispatchEvent(new Event('submit'));
+                } else {
+                    let m = Math.floor(timeLeft / 60);
+                    let s = timeLeft % 60;
+                    display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        async function loadExam() {
+            if (!examId) {
+                alert('Invalid Exam ID');
+                window.location.href = 'student.html';
+                return;
+            }
+
+            try {
+                const data = await api.request(`/exams/${examId}`);
+                document.getElementById('examTitle').textContent = data.exam.title;
+                document.getElementById('examDesc').textContent = data.exam.description;
+
+                const container = document.getElementById('questionsContainer');
+
+                if (data.questions.length === 0) {
+                    container.innerHTML = `<p class="text-center" style="color: var(--danger);">This exam has no questions yet.</p>`;
+                    document.querySelector('#examForm button').disabled = true;
+                } else {
+                    data.questions.forEach((q, index) => {
+                        container.innerHTML += `
+                            <div class="glass-panel question-card">
+                                <h3>${index + 1}. ${q.question_text}</h3>
+                                <div style="margin-top: 1rem;">
+                                    <label class="option-label"><input type="radio" name="q_${q.id}" value="A" required> A) ${q.option_a}</label>
+                                    <label class="option-label"><input type="radio" name="q_${q.id}" value="B" required> B) ${q.option_b}</label>
+                                    <label class="option-label"><input type="radio" name="q_${q.id}" value="C" required> C) ${q.option_c}</label>
+                                    <label class="option-label"><input type="radio" name="q_${q.id}" value="D" required> D) ${q.option_d}</label>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                document.getElementById('examForm').classList.remove('d-none');
+                startTimer();
+            } catch (err) {
+                alert('Failed to load exam details');
+                window.location.href = 'student.html';
+            }
+        }
+
+        document.getElementById('examForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearInterval(timerInterval);
+            document.querySelector('#examForm button').disabled = true;
+
+            const formData = new FormData(e.target);
+            const answers = {};
+
+            for (let [key, value] of formData.entries()) {
+                if (key.startsWith('q_')) {
+                    const qId = key.split('_')[1];
+                    answers[qId] = value;
+                }
+            }
+
+            try {
+                const result = await api.request('/results/submit', 'POST', { exam_id: examId, answers });
+
+                document.getElementById('examHeader').classList.add('d-none');
+                document.getElementById('examForm').classList.add('d-none');
+
+                const percentage = Math.round((result.score / result.totalQuestions) * 100);
+                document.getElementById('scoreDisplay').textContent = `${result.score} / ${result.totalQuestions} (${percentage}%)`;
+                document.getElementById('scoreDisplay').style.color = percentage >= 50 ? 'var(--success)' : 'var(--danger)';
+                document.getElementById('resultCard').classList.remove('d-none');
+            } catch (err) {
+                alert(err.message);
+                document.querySelector('#examForm button').disabled = false;
+            }
+        });
+
+        loadExam();
+    </script>
+</body>
+
+</html>

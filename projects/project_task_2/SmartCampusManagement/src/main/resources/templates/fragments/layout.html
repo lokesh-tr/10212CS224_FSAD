@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- ═══ HEAD FRAGMENT ═══ -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Campus Event Management System — Browse, register, and manage campus events">
+    <title th:text="${title} + ' — Smart Campus'">Smart Campus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- ═══ NAVBAR FRAGMENT ═══ -->
+<nav th:fragment="navbar" class="navbar">
+    <div class="container">
+        <a th:href="@{/}" class="navbar-brand">
+            <span class="brand-icon">🎓</span>
+            <span>SmartCampus</span>
+        </a>
+
+        <button class="nav-toggle" aria-label="Toggle navigation">
+            <span>☰</span>
+        </button>
+
+        <ul class="nav-links">
+            <li><a th:href="@{/}">🏠 Home</a></li>
+            <li><a th:href="@{/student/events}">📅 Events</a></li>
+            <li><a th:href="@{/student/my-registrations}">🎫 My Registrations</a></li>
+            <li sec:authorize="isAuthenticated()">
+                <a th:href="@{/admin/dashboard}">⚙️ Admin</a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="nav-btn" style="background: var(--gradient-danger);">🚪 Logout</button>
+                </form>
+            </li>
+            <li sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="nav-btn">🔐 Admin Login</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ═══ FOOTER FRAGMENT ═══ -->
+<footer th:fragment="footer" class="footer">
+    <div class="container">
+        <p>&copy; 2026 SmartCampus Event Management System. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- ═══ ALERTS FRAGMENT ═══ -->
+<div th:fragment="alerts">
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span>✅</span>
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <span>❌</span>
+        <span th:text="${errorMessage}"></span>
+    </div>
+</div>
+
+<!-- ═══ EVENT BADGE FRAGMENT ═══ -->
+<span th:fragment="eventBadge(type)" th:with="
+    badgeClass=${type.toLowerCase() == 'workshop' ? 'badge-workshop' :
+                (type.toLowerCase() == 'seminar' ? 'badge-seminar' :
+                (type.toLowerCase() == 'festival' ? 'badge-festival' :
+                (type.toLowerCase() == 'competition' ? 'badge-competition' :
+                (type.toLowerCase() == 'lecture' ? 'badge-lecture' :
+                (type.toLowerCase() == 'social event' ? 'badge-social-event' : 'badge-default')))))}">
+    <span class="badge" th:classappend="${badgeClass}" th:text="${type}">Workshop</span>
+</span>
+
+<!-- ═══ SCRIPTS FRAGMENT ═══ -->
+<div th:fragment="scripts">
+    <script th:src="@{/js/main.js}"></script>
+</div>
+
+</body>
+</html>

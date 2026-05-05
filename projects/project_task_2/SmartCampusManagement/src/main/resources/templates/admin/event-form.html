@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${formTitle})}"></head>
+<body>
+<div class="page-wrapper">
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="main-content">
+        <div class="container" style="max-width: 800px;">
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <!-- Breadcrumb -->
+            <div class="detail-header">
+                <div class="breadcrumb">
+                    <a th:href="@{/admin/dashboard}">Dashboard</a> <span>/</span>
+                    <a th:href="@{/admin/events}">Events</a> <span>/</span>
+                    <span th:text="${formTitle}">Create Event</span>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 2rem;">
+                <h2 th:text="${formTitle}" style="margin-bottom: 2rem;">
+                    <span class="gradient-text">Create New Event</span>
+                </h2>
+
+                <form th:action="${formAction}" th:object="${event}" method="post">
+
+                    <!-- Title -->
+                    <div class="form-group">
+                        <label for="title" class="form-label">Event Title *</label>
+                        <input type="text" id="title" th:field="*{title}" class="form-control"
+                               th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"
+                               placeholder="e.g., AI & Machine Learning Workshop">
+                        <p class="form-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Error</p>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea id="description" th:field="*{description}" class="form-control" rows="4"
+                                  th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
+                                  placeholder="Provide a detailed description of the event..."></textarea>
+                        <p class="form-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Error</p>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventDate" class="form-label">Event Date *</label>
+                            <input type="date" id="eventDate" th:field="*{eventDate}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('eventDate')} ? 'is-invalid'">
+                            <p class="form-error" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}">Error</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime" class="form-label">Event Time *</label>
+                            <input type="time" id="eventTime" th:field="*{eventTime}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('eventTime')} ? 'is-invalid'">
+                            <p class="form-error" th:if="${#fields.hasErrors('eventTime')}" th:errors="*{eventTime}">Error</p>
+                        </div>
+                    </div>
+
+                    <!-- Venue -->
+                    <div class="form-group">
+                        <label for="venue" class="form-label">Venue *</label>
+                        <input type="text" id="venue" th:field="*{venue}" class="form-control"
+                               th:classappend="${#fields.hasErrors('venue')} ? 'is-invalid'"
+                               placeholder="e.g., Main Auditorium, Block A">
+                        <p class="form-error" th:if="${#fields.hasErrors('venue')}" th:errors="*{venue}">Error</p>
+                    </div>
+
+                    <!-- Department & Event Type -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="department" class="form-label">Department *</label>
+                            <input type="text" id="department" th:field="*{department}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('department')} ? 'is-invalid'"
+                                   placeholder="e.g., Computer Science">
+                            <p class="form-error" th:if="${#fields.hasErrors('department')}" th:errors="*{department}">Error</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventType" class="form-label">Event Type *</label>
+                            <select id="eventType" th:field="*{eventType}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('eventType')} ? 'is-invalid'">
+                                <option value="">Select type...</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Seminar">Seminar</option>
+                                <option value="Lecture">Lecture</option>
+                                <option value="Competition">Competition</option>
+                                <option value="Festival">Festival</option>
+                                <option value="Social Event">Social Event</option>
+                            </select>
+                            <p class="form-error" th:if="${#fields.hasErrors('eventType')}" th:errors="*{eventType}">Error</p>
+                        </div>
+                    </div>
+
+                    <!-- Max Capacity -->
+                    <div class="form-group" style="max-width: 300px;">
+                        <label for="maxCapacity" class="form-label">Max Capacity *</label>
+                        <input type="number" id="maxCapacity" th:field="*{maxCapacity}" class="form-control"
+                               th:classappend="${#fields.hasErrors('maxCapacity')} ? 'is-invalid'"
+                               placeholder="100" min="1">
+                        <p class="form-error" th:if="${#fields.hasErrors('maxCapacity')}" th:errors="*{maxCapacity}">Error</p>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-success btn-lg">💾 Save Event</button>
+                        <a th:href="@{/admin/events}" class="btn btn-outline btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

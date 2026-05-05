@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Register for Event')}"></head>
+<body>
+<div class="page-wrapper">
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="main-content">
+        <div class="container" style="max-width: 700px;">
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <!-- Breadcrumb -->
+            <div class="detail-header">
+                <div class="breadcrumb">
+                    <a th:href="@{/}">Home</a> <span>/</span>
+                    <a th:href="@{/student/events}">Events</a> <span>/</span>
+                    <a th:href="@{/student/events/{id}(id=${event.id})}" th:text="${event.title}">Event</a> <span>/</span>
+                    <span>Register</span>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 2rem;">
+                <h2 style="margin-bottom: 0.5rem;">✍️ Register for Event</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;" th:text="${event.title}">Event Title</p>
+
+                <form th:action="@{/student/events/{id}/register(id=${event.id})}"
+                      th:object="${registration}" method="post">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentName" class="form-label">Full Name *</label>
+                            <input type="text" id="studentName" th:field="*{studentName}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('studentName')} ? 'is-invalid'"
+                                   placeholder="John Doe" required>
+                            <p class="form-error" th:if="${#fields.hasErrors('studentName')}"
+                               th:errors="*{studentName}">Error</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentId" class="form-label">Student ID *</label>
+                            <input type="text" id="studentId" th:field="*{studentId}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('studentId')} ? 'is-invalid'"
+                                   placeholder="STU2024001" required>
+                            <p class="form-error" th:if="${#fields.hasErrors('studentId')}"
+                               th:errors="*{studentId}">Error</p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentEmail" class="form-label">Email Address *</label>
+                            <input type="email" id="studentEmail" th:field="*{studentEmail}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('studentEmail')} ? 'is-invalid'"
+                                   placeholder="john@university.edu" required>
+                            <p class="form-error" th:if="${#fields.hasErrors('studentEmail')}"
+                               th:errors="*{studentEmail}">Error</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" th:field="*{phone}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"
+                                   placeholder="+91 9876543210">
+                            <p class="form-error" th:if="${#fields.hasErrors('phone')}"
+                               th:errors="*{phone}">Error</p>
+                        </div>
+                    </div>
+
+                    <!-- Event summary -->
+                    <div style="background: var(--bg-glass); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
+                        <h5 style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.8rem; text-transform: uppercase;">Event Summary</h5>
+                        <p style="font-size: 0.9rem;">
+                            📅 <span th:text="${#temporals.format(event.eventDate, 'EEEE, MMM dd, yyyy')}">Date</span>
+                            &nbsp;•&nbsp;
+                            🕐 <span th:text="${#temporals.format(event.eventTime, 'hh:mm a')}">Time</span>
+                            &nbsp;•&nbsp;
+                            📍 <span th:text="${event.venue}">Venue</span>
+                        </p>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success btn-lg">✅ Confirm Registration</button>
+                        <a th:href="@{/student/events/{id}(id=${event.id})}" class="btn btn-outline btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+body {
+    background-color: antiquewhite;
+}
+
+header {
+    text-align: center;
+}
+
+.main-container {
+    display: flex;
+    margin-left: 15%;
+    margin-right: 15%;
+
+    justify-content: center;
+    border: 1px solid gray;
+    border-radius: 16px;
+    padding: 12px;
+
+    background-color: white;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    padding: 8px;
+}
+
+.spaced-container {
+    background-color: wheat;
+    flex-wrap: wrap;
+    border-radius: 16px;
+    display: flex;
+    padding: 8px;
+    justify-content: space-between;
+    /* margin-left: 10%;
+    margin-right: 10%; */
+}
+
+.spaced-column {
+    display: flex;
+    flex-direction: column;
+    background-color: wheat;
+    border-radius: 16px;
+    padding: 8px;
+}
+
+#textarea-column {
+    display: flex;
+    flex-direction: column;
+    background-color: wheat;
+    padding: 8px;
+    border-radius: 16px;
+}
+
+textarea {
+    border-radius: 16px;
+    height: 64px;
+    padding: 8px;
+}
+
+select {
+    border-radius: 16px;
+    background-color: antiquewhite;
+    padding: 8px;
+}
+
+fieldset {
+    background-color: antiquewhite;
+    border-radius: 25px;
+}
+
+.form-label {
+    background-color: wheat;
+    border-radius: 16px;
+    display: flex;
+    padding: 8px;
+    font-size: 20px;    
+}
+
+.label-text {
+    padding: 8px;
+    border-radius: 16px;
+    background-color: wheat;
+    font-size: 20px;
+}
+
+.input-field {
+    border-radius: 16px;
+    border: 2px solid black;
+    padding: 8px;
+}
+
+.button-container {
+    display: flex;
+    background-color: azure;
+    border-radius: 25px;
+    border: 1px solid aqua;
+    justify-content: center;
+}
+#submit-button {
+    padding: 16px;
+    background-color: lightgreen;
+    border-radius: 25px;
+    margin: 16px;
+    width: 100%;
+}
+
+#reset-button {
+    padding: 16px;
+    background-color: gray;
+    color: white;
+    border-radius: 25px;
+    margin: 16px;
+    width: 100%;
+}
+
+#full-name-field {
+    border-radius: 16px;
+    flex-wrap: wrap;
+    border: 2px solid black;
+    padding: 8px;
+    width: 50%;
+}

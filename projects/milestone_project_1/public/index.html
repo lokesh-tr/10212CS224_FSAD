@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Examination System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">ExamPro</a>
+        <div class="nav-links" id="navLinks">
+            <a href="login.html" class="btn btn-outline btn-sm">Sign In</a>
+            <a href="register.html" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
+    </nav>
+
+    <div class="container text-center fade-in" style="margin-top: 10vh; max-width: 800px;">
+        <h1 style="font-size: 3.5rem; margin-bottom: 1.5rem;">The Future of Online Testing</h1>
+        <p style="font-size: 1.25rem;">A dynamic, fast, and secure exam and result processing platform for modern educational institutions.</p>
+        
+        <div class="glass-panel mt-4" style="display: inline-block; text-align: left; max-width: 600px; width: 100%;">
+            <h3>Why choose ExamPro?</h3>
+            <ul style="color: var(--text-muted); padding-left: 1.5rem; margin-top: 1rem; line-height: 1.8;">
+                <li>Lightning-fast Node.js Backend</li>
+                <li>Robust Role-Based Access Control</li>
+                <li>Instant Automated Grading</li>
+                <li>Beautiful, Distraction-Free Interface</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 3rem;">
+            <a href="register.html" class="btn btn-primary" style="font-size: 1.25rem; padding: 1rem 2rem;">Start Using Now</a>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (api.getToken()) {
+            const role = localStorage.getItem('role');
+            if(role === 'admin') window.location.href = 'admin.html';
+            else if(role === 'student') window.location.href = 'student.html';
+        }
+    </script>
+</body>
+</html>

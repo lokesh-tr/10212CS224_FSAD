@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Registrations')}"></head>
+<body>
+<div class="page-wrapper">
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="main-content">
+        <div class="container">
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="page-title-bar">
+                <h1>🎫 My <span class="gradient-text">Registrations</span></h1>
+                <p class="page-subtitle">Look up your event registrations using your email address</p>
+            </div>
+
+            <!-- Search Form -->
+            <div class="glass-card" style="max-width: 600px; margin-bottom: 2rem;">
+                <form th:action="@{/student/my-registrations}" method="get" style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control"
+                               th:value="${searchEmail}"
+                               placeholder="Enter your registered email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-bottom: 0;">🔍 Search</button>
+                </form>
+            </div>
+
+            <!-- Results -->
+            <div th:if="${registrations != null}">
+
+                <div th:if="${#lists.isEmpty(registrations)}" class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <h3>No registrations found</h3>
+                    <p th:text="'No events found for email: ' + ${searchEmail}">No results</p>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(registrations)}">
+                    <h3 style="margin-bottom: 1rem;">
+                        Found <span class="gradient-text" th:text="${#lists.size(registrations)}">0</span> registration(s)
+                    </h3>
+
+                    <div class="data-table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Event</th>
+                                    <th>Date &amp; Time</th>
+                                    <th>Venue</th>
+                                    <th>Registered On</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="reg, iter : ${registrations}">
+                                    <td th:text="${iter.index + 1}">1</td>
+                                    <td>
+                                        <a th:href="@{/student/events/{id}(id=${reg.event.id})}"
+                                           th:text="${reg.event.title}" style="font-weight: 600;">Event</a>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#temporals.format(reg.event.eventDate, 'MMM dd, yyyy')}">Date</span>
+                                        <br>
+                                        <small style="color: var(--text-muted);"
+                                               th:text="${#temporals.format(reg.event.eventTime, 'hh:mm a')}">Time</small>
+                                    </td>
+                                    <td th:text="${reg.event.venue}">Venue</td>
+                                    <td>
+                                        <span th:text="${#temporals.format(reg.registeredAt, 'MMM dd, yyyy HH:mm')}">Timestamp</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/student/events/{id}(id=${reg.event.id})}"
+                                           class="btn btn-sm btn-outline">View Event</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

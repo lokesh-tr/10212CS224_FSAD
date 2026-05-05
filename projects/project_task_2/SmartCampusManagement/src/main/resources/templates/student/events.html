@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Upcoming Events')}"></head>
+<body>
+<div class="page-wrapper">
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="main-content">
+        <div class="container">
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <div class="page-title-bar">
+                <h1>📅 Upcoming <span class="gradient-text">Events</span></h1>
+                <p class="page-subtitle">Discover what's happening on campus and register for events you love</p>
+            </div>
+
+            <div th:if="${#lists.isEmpty(events)}" class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h3>No upcoming events</h3>
+                <p>Check back later — exciting events are being planned!</p>
+            </div>
+
+            <div class="card-grid">
+                <div th:each="event : ${events}"
+                     class="glass-card event-card animate-in">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <a th:href="@{/student/events/{id}(id=${event.id})}"
+                               th:text="${event.title}">Event Title</a>
+                        </h3>
+                        <span th:replace="~{fragments/layout :: eventBadge(${event.eventType})}"></span>
+                    </div>
+                    <p class="card-desc" th:text="${event.description}">Description</p>
+                    <div class="card-meta">
+                        <span class="meta-item">
+                            <span class="icon">📅</span>
+                            <span th:text="${#temporals.format(event.eventDate, 'MMM dd, yyyy')}">Date</span>
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">🕐</span>
+                            <span th:text="${#temporals.format(event.eventTime, 'hh:mm a')}">Time</span>
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">📍</span>
+                            <span th:text="${event.venue}">Venue</span>
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">🏛️</span>
+                            <span th:text="${event.department}">Department</span>
+                        </span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+                        <span class="badge badge-capacity"
+                              th:classappend="${event.registeredCount >= event.maxCapacity} ? 'full' : 'available'"
+                              th:text="${event.registeredCount >= event.maxCapacity} ? 'Full' : (${event.maxCapacity - event.registeredCount} + ' spots left')">
+                            Spots
+                        </span>
+                        <div class="btn-group">
+                            <a th:href="@{/student/events/{id}(id=${event.id})}"
+                               class="btn btn-sm btn-outline">Details</a>
+                            <a th:if="${event.registeredCount < event.maxCapacity}"
+                               th:href="@{/student/events/{id}/register(id=${event.id})}"
+                               class="btn btn-sm btn-primary">Register</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

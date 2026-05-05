@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Register</title>
+  </head>
+  <body>
+    <header>
+      <h1>Create a new Account</h1>
+    </header>
+
+    <main class="main-container">
+      <form action="register">
+        <div class="spaced-container">
+        <label for="text" class="form-label">Full Name</label>
+        <input
+          type="text"
+          id="full-name-field"
+          required
+        />
+        </div>
+        <br>
+        <div class="spaced-container">
+          <label for="" class="label-text">Participation Category</label>
+          <select name="" id="">
+            <option value="">Select an Option</option>
+            <option value="">Individual</option>
+            <option value="">Team</option>
+            <option value="">Audience</option>
+          </select>
+        </div>
+        <br>
+
+        <div class="spaced-column">
+          <label for="" class="form-label">T-Shirt Size</label>
+          <fieldset>
+            <legend>Select your size</legend>
+            <input type="radio" id="size-s" name="sizes" /> S <br />
+            <input type="radio" id="size-m" name="sizes" /> M <br />
+            <input type="radio" id="size-l" name="sizes" /> L <br />
+            <input type="radio" id="size-xl" name="sizes" /> XL <br />
+            <input type="radio" id="size-xxl" name="sizes" /> XXL <br />
+          </fieldset>
+          <br />
+        </div>
+
+        <br>
+
+        <div class="spaced-column">
+          <label for="" class="form-label">Technical Interests</label>
+          <fieldset>
+            <legend>Available Interests</legend>
+            <input type="checkbox" id="int-ai" name="interests" value="ai" />
+            <label for="">Artificial Intelligence</label>
+
+            <br />
+
+            <input type="checkbox" id="int-ai" name="interests" value="ai" />
+            <label for="">Web Development</label>
+
+            <br />
+
+            <input type="checkbox" id="int-ai" name="interests" value="ai" />
+            <label for="">Cloud Computing</label>
+          </fieldset>
+        </div>
+        <br>
+
+        <div id="textarea-column">
+        <label for="expectations" class="form-label"
+          >Briefly describe expectations:</label
+        > <br>
+        <textarea
+         name="expectations"
+          id="expectations"
+          placeholder="Type your expectations here"></textarea>
+        </div>
+        
+        <hr>
+
+        <div class="spaced-container">
+        <label for="register" class="form-label">Email</label>
+        <input
+          type="email"
+          class="input-field"
+          id="login-email"
+          name="email"
+          required
+          aria-required="true"
+          autocomplete="email"
+          placeholder="example@email.com"
+        />
+        </div>
+        <br>
+        <div class="spaced-container">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="input-field"
+          id="login-password"
+          name="password"
+          required
+          aria-required="true"
+          autocomplete="current-password"
+        />
+        </div>
+        <br>
+        <div class="spaced-container">
+        <label for="password" class="form-label">Confirm Password</label>
+        <input
+          type="password"
+          class="input-field"
+          id="login-password"
+          name="password"
+          required
+          aria-required="true"
+          autocomplete="current-password"
+        />
+        </div>
+        <hr>
+        <div class="button-container">
+          <input type="reset" id="reset-button" value = "Reset Form"/>
+        <input type="submit" id="submit-button" value="Submit"/>
+        </div>
+      </form>
+      <div class="container">
+      <sub> Already have an account? <a href="../../index.html">Login</a> </sub>
+      </div>
+    </main>
+  </body>
+</html>

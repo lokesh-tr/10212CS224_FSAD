@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Submit Feedback')}"></head>
+<body>
+<div class="page-wrapper">
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="main-content">
+        <div class="container" style="max-width: 600px;">
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <!-- Breadcrumb -->
+            <div class="detail-header">
+                <div class="breadcrumb">
+                    <a th:href="@{/}">Home</a> <span>/</span>
+                    <a th:href="@{/student/events}">Events</a> <span>/</span>
+                    <a th:href="@{/student/events/{id}(id=${event.id})}" th:text="${event.title}">Event</a> <span>/</span>
+                    <span>Feedback</span>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 2rem;">
+                <h2 style="margin-bottom: 0.5rem;">⭐ Leave Feedback</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;" th:text="${event.title}">Event Title</p>
+
+                <form th:action="@{/student/events/{id}/feedback(id=${event.id})}"
+                      th:object="${feedback}" method="post">
+
+                    <div class="form-group">
+                        <label for="studentName" class="form-label">Your Name *</label>
+                        <input type="text" id="studentName" th:field="*{studentName}" class="form-control"
+                               th:classappend="${#fields.hasErrors('studentName')} ? 'is-invalid'"
+                               placeholder="Your name" required>
+                        <p class="form-error" th:if="${#fields.hasErrors('studentName')}"
+                           th:errors="*{studentName}">Error</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Rating *</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" th:field="*{rating}" value="5">
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" th:field="*{rating}" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" th:field="*{rating}" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" th:field="*{rating}" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" th:field="*{rating}" value="1">
+                            <label for="star1">★</label>
+                        </div>
+                        <p class="form-error" th:if="${#fields.hasErrors('rating')}"
+                           th:errors="*{rating}">Error</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment" class="form-label">Comment</label>
+                        <textarea id="comment" th:field="*{comment}" class="form-control"
+                                  th:classappend="${#fields.hasErrors('comment')} ? 'is-invalid'"
+                                  placeholder="Share your experience..." rows="4"></textarea>
+                        <p class="form-error" th:if="${#fields.hasErrors('comment')}"
+                           th:errors="*{comment}">Error</p>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary btn-lg">📩 Submit Feedback</button>
+                        <a th:href="@{/student/events/{id}(id=${event.id})}" class="btn btn-outline btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

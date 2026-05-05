@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Login</title>
+  </head>
+  <body>
+    <header>
+      <h1>Login</h1>
+    </header>
+
+    <main class="container">
+      <form action="login">
+        <label for="login" class="form-label">Username</label>
+        <input
+          type="email"
+          class="input-field"
+          id="login-email"
+          name="email"
+          required
+          aria-required="true"
+          autocomplete="email"
+          placeholder="example@email.com"
+        />
+
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="input-field"
+          id="login-password"
+          name="password"
+          required
+          aria-required="true"
+          autocomplete="current-password"
+        />
+        <br />
+        <label for="forgot-password">
+          <a href="./pages/forgotPassword/forgotPassword.html"
+            >Forgot Password</a
+          >
+        </label>
+        <br />
+        <input type="submit" />
+      </form>
+      <sub> New? <a href="./pages/signUp/signUp.html">SignUp</a> </sub>
+    </main>
+  </body>
+</html>

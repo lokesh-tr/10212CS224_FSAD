@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Event Registrations')}"></head>
+<body>
+<div class="page-wrapper">
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="main-content">
+        <div class="container">
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <!-- Breadcrumb -->
+            <div class="detail-header">
+                <div class="breadcrumb">
+                    <a th:href="@{/admin/dashboard}">Dashboard</a> <span>/</span>
+                    <a th:href="@{/admin/events}">Events</a> <span>/</span>
+                    <span th:text="${event.title}">Event</span> <span>/</span>
+                    <span>Registrations</span>
+                </div>
+            </div>
+
+            <div class="page-title-bar">
+                <h1>👥 Registrations for <span class="gradient-text" th:text="${event.title}">Event</span></h1>
+                <p class="page-subtitle" th:text="'View all students registered for this event'">Subtitle</p>
+            </div>
+
+            <!-- Stats summary -->
+            <div class="stats-grid" style="margin-bottom: 2rem;">
+                <div class="stat-card">
+                    <div class="stat-icon cyan">👥</div>
+                    <div>
+                        <div class="stat-value" th:text="${stats.totalRegistrations}">0</div>
+                        <div class="stat-label">Total Registrations</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🎯</div>
+                    <div>
+                        <div class="stat-value" th:text="${stats.maxCapacity}">100</div>
+                        <div class="stat-label">Max Capacity</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">📊</div>
+                    <div>
+                        <div class="stat-value"
+                             th:text="${#numbers.formatDecimal(stats.capacityUtilization, 1, 1)} + '%'">0%</div>
+                        <div class="stat-label">Capacity Utilization</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pink">⭐</div>
+                    <div>
+                        <div class="stat-value"
+                             th:text="${stats.averageRating != null} ? ${#numbers.formatDecimal(stats.averageRating, 1, 1)} : 'N/A'">N/A</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capacity Progress -->
+            <div class="glass-card" style="margin-bottom: 2rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Capacity Utilization</span>
+                    <span style="font-size: 0.9rem; font-weight: 600;"
+                          th:text="${stats.totalRegistrations} + ' / ' + ${stats.maxCapacity}">0/100</span>
+                </div>
+                <div class="progress-bar-container" style="height: 10px;">
+                    <div class="progress-bar"
+                         th:style="'width:' + ${stats.capacityUtilization} + '%'"></div>
+                </div>
+            </div>
+
+            <!-- Registrations Table -->
+            <div th:if="${#lists.isEmpty(registrations)}" class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h3>No registrations yet</h3>
+                <p>No students have registered for this event.</p>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(registrations)}" class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Registered On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="reg, iter : ${registrations}">
+                            <td th:text="${iter.index + 1}">1</td>
+                            <td style="font-weight: 600; color: var(--text-primary);"
+                                th:text="${reg.studentName}">Name</td>
+                            <td th:text="${reg.studentId}">STU001</td>
+                            <td th:text="${reg.studentEmail}">email@univ.edu</td>
+                            <td th:text="${reg.phone != null} ? ${reg.phone} : '—'">Phone</td>
+                            <td th:text="${#temporals.format(reg.registeredAt, 'MMM dd, yyyy HH:mm')}">Date</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <a th:href="@{/admin/events}" class="btn btn-outline">← Back to Events</a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

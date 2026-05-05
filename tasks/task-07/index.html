@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Forms</title>
+  </head>
+  <body>
+    <h1>User Registration Form</h1>
+
+    <div class="form_container">
+      <action="/submit" method="post" >
+        <label for="name">Enter your full name:</label> <br>
+        <input type="text" id="name" name="name" /> <br>
+        <label for="email">Enter your email:</label> <br>
+        <input type="email"> <br>
+        <label for="password">Enter your password: </label> <br>
+        <input type="password"> <br>
+        <label for="password">Confirm your password: </label> <br>
+        <input type="password"> <br>
+        <br> 
+
+        <label for="gender">Select your gender: </label> <br>
+        <input type="radio" name="gender" value="male"> Male <br>
+        <input type="radio" name="gender" value="female"> Female <br>
+        <input type="radio" name="gender" value="other"> Other <br>
+        <br>
+        <label for="dob">Date of Birth</label>
+        <input type="date"> <br>
+        <br>
+        <label for="address">Address:</label> <br>
+        <textarea name="address" id="address"></textarea> <br> <br>
+
+        <label for="age_group">Age Group</label> 
+        <select name="age_group" id="age_group">
+            <option value="default">Select Age Group</option>
+            <option value="first">01 - 20 Years</option>
+            <option value="second">21 - 40 Years</option>
+            <option value="third">41 - 60 Years</option>
+        </select> <br><br>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

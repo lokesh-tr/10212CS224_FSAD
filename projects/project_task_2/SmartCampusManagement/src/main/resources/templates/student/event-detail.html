@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${event.title})}"></head>
+<body>
+<div class="page-wrapper">
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="main-content">
+        <div class="container">
+
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+
+            <!-- Breadcrumb -->
+            <div class="detail-header">
+                <div class="breadcrumb">
+                    <a th:href="@{/}">Home</a> <span>/</span>
+                    <a th:href="@{/student/events}">Events</a> <span>/</span>
+                    <span th:text="${event.title}">Event Title</span>
+                </div>
+            </div>
+
+            <div class="detail-body">
+                <!-- Main Content -->
+                <div class="detail-main">
+                    <div class="glass-card">
+                        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                            <span th:replace="~{fragments/layout :: eventBadge(${event.eventType})}"></span>
+                            <span class="badge badge-capacity"
+                                  th:classappend="${event.registeredCount >= event.maxCapacity} ? 'full' : 'available'"
+                                  th:text="${event.registeredCount >= event.maxCapacity} ? '🔴 Full' : '🟢 ' + (${event.maxCapacity - event.registeredCount}) + ' spots left'">
+                                Spots
+                            </span>
+                        </div>
+                        <h1 th:text="${event.title}" style="margin-bottom: 1rem;">Event Title</h1>
+                        <p style="color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;"
+                           th:text="${event.description}">Description</p>
+                    </div>
+
+                    <!-- Event Details -->
+                    <div class="glass-card">
+                        <h3 style="margin-bottom: 1rem;">📋 Event Details</h3>
+                        <ul class="info-list">
+                            <li>
+                                <span class="icon">📅</span>
+                                <strong>Date:</strong>
+                                <span th:text="${#temporals.format(event.eventDate, 'EEEE, MMMM dd, yyyy')}">Date</span>
+                            </li>
+                            <li>
+                                <span class="icon">🕐</span>
+                                <strong>Time:</strong>
+                                <span th:text="${#temporals.format(event.eventTime, 'hh:mm a')}">Time</span>
+                            </li>
+                            <li>
+                                <span class="icon">📍</span>
+                                <strong>Venue:</strong>
+                                <span th:text="${event.venue}">Venue</span>
+                            </li>
+                            <li>
+                                <span class="icon">🏛️</span>
+                                <strong>Department:</strong>
+                                <span th:text="${event.department}">Department</span>
+                            </li>
+                            <li>
+                                <span class="icon">👥</span>
+                                <strong>Capacity:</strong>
+                                <span th:text="${event.registeredCount} + ' / ' + ${event.maxCapacity} + ' registered'">0/100</span>
+                            </li>
+                        </ul>
+
+                        <!-- Capacity bar -->
+                        <div class="progress-bar-container" style="margin-top: 1rem;">
+                            <div class="progress-bar"
+                                 th:style="'width:' + ${event.maxCapacity > 0 ? (event.registeredCount * 100 / event.maxCapacity) : 0} + '%'"></div>
+                        </div>
+                    </div>
+
+                    <!-- Rating & Feedback Section -->
+                    <div class="glass-card">
+                        <h3 style="margin-bottom: 1rem;">⭐ Feedback & Ratings</h3>
+
+                        <div th:if="${averageRating != null}" style="margin-bottom: 1rem;">
+                            <span style="font-size: 1.5rem; font-weight: 700;" th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">4.5</span>
+                            <span style="color: var(--text-muted);"> / 5.0</span>
+                            <span style="margin-left: 0.5rem; color: var(--accent-amber);">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                      th:text="${i <= averageRating} ? '★' : '☆'">★</span>
+                            </span>
+                            <span style="color: var(--text-muted); font-size: 0.85rem;"
+                                  th:text="'(' + ${#lists.size(feedbacks)} + ' reviews)'"> (5 reviews)</span>
+                        </div>
+                        <div th:if="${averageRating == null}" style="color: var(--text-muted); margin-bottom: 1rem;">
+                            No ratings yet. Be the first to leave feedback!
+                        </div>
+
+                        <!-- Feedback list -->
+                        <div class="feedback-list" th:if="${!#lists.isEmpty(feedbacks)}">
+                            <div th:each="fb : ${feedbacks}" class="feedback-item">
+                                <div class="feedback-header">
+                                    <span class="feedback-author" th:text="${fb.studentName}">John</span>
+                                    <span class="stars-display">
+                                        <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                              th:text="${i <= fb.rating} ? '★' : '☆'">★</span>
+                                    </span>
+                                </div>
+                                <p class="feedback-comment" th:text="${fb.comment}">Great event!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="detail-sidebar">
+                    <div class="glass-card sidebar-card">
+                        <h4 style="margin-bottom: 1.25rem;">Quick Actions</h4>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a th:if="${event.registeredCount < event.maxCapacity}"
+                               th:href="@{/student/events/{id}/register(id=${event.id})}"
+                               class="btn btn-primary" style="width: 100%;">
+                                ✍️ Register Now
+                            </a>
+                            <span th:if="${event.registeredCount >= event.maxCapacity}"
+                                  class="btn btn-outline" style="width: 100%; opacity: 0.6; cursor: not-allowed;">
+                                🚫 Registration Full
+                            </span>
+                            <a th:href="@{/student/events/{id}/feedback(id=${event.id})}"
+                               class="btn btn-outline" style="width: 100%;">
+                                ⭐ Leave Feedback
+                            </a>
+                            <a th:href="@{/student/events}" class="btn btn-ghost" style="width: 100%;">
+                                ← Back to Events
+                            </a>
+                        </div>
+
+                        <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: 1.25rem 0;">
+
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                            <p>📅 Posted on <span th:text="${#temporals.format(event.createdAt, 'MMM dd, yyyy')}">Date</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

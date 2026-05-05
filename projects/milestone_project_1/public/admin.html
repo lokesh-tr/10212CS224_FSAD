@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ExamPro</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">ExamPro <span>| Admin</span></a>
+        <div class="nav-links">
+            <span id="userDisplay" style="color: var(--text-muted); margin-right: 1rem;"></span>
+            <button id="logoutBtn" class="btn btn-outline btn-sm">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container fade-in">
+        <h1 class="mb-4">Admin Dashboard</h1>
+
+        <div class="flex-space mb-4">
+            <h2>Manage Exams</h2>
+            <button class="btn btn-primary" onclick="toggleForm('createExamForm')">+ Create New Exam</button>
+        </div>
+
+        <div id="createExamForm" class="glass-panel d-none mb-4">
+            <h3>Create a New Exam</h3>
+            <form id="newExamForm">
+                <div class="form-group">
+                    <label>Exam Title</label>
+                    <input type="text" id="examTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="examDesc" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Save Exam</button>
+                <button type="button" class="btn btn-outline" onclick="toggleForm('createExamForm')">Cancel</button>
+            </form>
+        </div>
+
+        <div id="examList" class="grid mb-4">
+            <!-- Exams will load here -->
+        </div>
+
+        <h2 class="mt-4 mb-4">All Student Results</h2>
+        <div class="glass-panel" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <th style="padding: 1rem;">Student</th>
+                        <th style="padding: 1rem;">Exam</th>
+                        <th style="padding: 1rem;">Score</th>
+                        <th style="padding: 1rem;">Submitted At</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                    <!-- Results load here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal/Form for Adding Questions (Hidden initially) -->
+    <div id="addQuestionModal" class="glass-panel d-none"
+        style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; z-index: 1000; background: var(--bg-gradient-end);">
+        <h3>Add Question to Exam</h3>
+        <form id="newQuestionForm">
+            <input type="hidden" id="activeExamId">
+            <div class="form-group">
+                <label>Question Text</label>
+                <textarea id="qText" class="form-control" rows="2" required></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label>Option A</label>
+                    <input type="text" id="qOptA" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Option B</label>
+                    <input type="text" id="qOptB" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Option C</label>
+                    <input type="text" id="qOptC" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Option D</label>
+                    <input type="text" id="qOptD" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Correct Option (A, B, C, or D)</label>
+                <select id="qCorrect" class="form-control" required>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Add Question</button>
+            <button type="button" class="btn btn-outline" onclick="closeQuestionModal()">Cancel</button>
+        </form>
+    </div>
+    <!-- Overlay -->
+    <div id="modalOverlay" class="d-none"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"
+        onclick="closeQuestionModal()"></div>
+
+    <script src="js/api.js"></script>
+    <script>
+        api.checkAuth('admin');
+        api.setupNavbar();
+
+        function toggleForm(id) {
+            document.getElementById(id).classList.toggle('d-none');
+        }
+
+        async function loadExams() {
+            try {
+                const exams = await api.request('/exams');
+                const list = document.getElementById('examList');
+                list.innerHTML = '';
+                exams.forEach(ex => {
+                    list.innerHTML += `
+                        <div class="card">
+                            <h3>${ex.title}</h3>
+                            <p>${ex.description || 'No description'}</p>
+                            <div class="flex-space">
+                                <span style="font-size: 0.875rem; color: var(--text-muted)">ID: ${ex.id}</span>
+                                <button class="btn btn-outline btn-sm" onclick="openQuestionModal(${ex.id})">Add Question</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error(err);
+                alert('Failed to load exams');
+            }
+        }
+
+        async function loadResults() {
+            try {
+                const results = await api.request('/results/all');
+                const tbody = document.getElementById('resultsTableBody');
+                tbody.innerHTML = '';
+                results.forEach(r => {
+                    const date = new Date(r.submitted_at).toLocaleString();
+                    const percentage = Math.round((r.score / r.total_questions) * 100) || 0;
+                    tbody.innerHTML += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 1rem;">${r.username}</td>
+                            <td style="padding: 1rem;">${r.exam_title}</td>
+                            <td style="padding: 1rem;">${r.score}/${r.total_questions} <span style="color: ${percentage >= 50 ? 'var(--success)' : 'var(--danger)'};">(${percentage}%)</span></td>
+                            <td style="padding: 1rem; color: var(--text-muted); font-size: 0.875rem;">${date}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        document.getElementById('newExamForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('examTitle').value;
+            const description = document.getElementById('examDesc').value;
+
+            try {
+                await api.request('/exams', 'POST', { title, description });
+                alert('Exam created!');
+                document.getElementById('newExamForm').reset();
+                toggleForm('createExamForm');
+                loadExams();
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+
+        function openQuestionModal(examId) {
+            document.getElementById('activeExamId').value = examId;
+            document.getElementById('addQuestionModal').classList.remove('d-none');
+            document.getElementById('modalOverlay').classList.remove('d-none');
+        }
+
+        function closeQuestionModal() {
+            document.getElementById('addQuestionModal').classList.add('d-none');
+            document.getElementById('modalOverlay').classList.add('d-none');
+            document.getElementById('newQuestionForm').reset();
+        }
+
+        document.getElementById('newQuestionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const examId = document.getElementById('activeExamId').value;
+            const payload = {
+                question_text: document.getElementById('qText').value,
+                option_a: document.getElementById('qOptA').value,
+                option_b: document.getElementById('qOptB').value,
+                option_c: document.getElementById('qOptC').value,
+                option_d: document.getElementById('qOptD').value,
+                correct_option: document.getElementById('qCorrect').value
+            };
+
+            try {
+                await api.request(`/exams/${examId}/questions`, 'POST', payload);
+                alert('Question added!');
+                closeQuestionModal();
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+
+        // Init
+        loadExams();
+        loadResults();
+    </script>
+</body>
+
+</html>
